@@ -1,6 +1,6 @@
 # jVectorMapKibanaCountry
 
-An Offline country map visualizer for Kibana 4.4.
+An Offline country code map visualizer for Kibana 4.4.
 
 Copyright 2016 Arnaud Marchand
 
