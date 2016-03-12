@@ -33,16 +33,16 @@ function JVectorMapCountryProvider(Private) {
 		schemas: new Schemas([
 				{
 					group: 'metrics',
-					name: 'locationsize',
-					title: 'LocationSize',
+					name: 'countryvalue',
+					title: 'CouuntryValue',
 					min: 1,
 					max: 1,
 					aggFilter: ['count', 'avg', 'sum', 'min', 'max', 'cardinality', 'std_dev']
 				},
 				{
 					group: 'buckets',
-					name: 'locations',
-					title: 'Locations',
+					name: 'countries',
+					title: 'Countries',
 					min: 1,
 					max: 1,
 					aggFilter: '!geohash_grid'

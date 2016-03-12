@@ -7,13 +7,7 @@ module.controller('JVectorMapCountryController', function($scope, Private) {
 	var filterManager = Private(require('ui/filter_manager'));
 
 	
-	$scope.hexToRGB = function(hex){
-		 	hex=hex.replace(/#/g,'');
-		    var r = parseInt('0x'+hex[0]+hex[1]);
-		    var g = parseInt('0x'+hex[2]+hex[3]);
-		    var b = parseInt('0x'+hex[4]+hex[5]);
-	    	return [r,g,b];
-	}
+	
 	
 	$scope.filter = function(tag) {
 		// Add a new filter via the filter manager
@@ -35,93 +29,53 @@ module.controller('JVectorMapCountryController', function($scope, Private) {
 			return;
 		}
 
-		if($scope.vis.aggs.bySchemaName['locations']== undefined)
+		if($scope.vis.aggs.bySchemaName['countries']== undefined)
 		{
 			$scope.locations = null;
 			return;
 		}
 
 		// Retrieve the id of the configured tags aggregation
-		var locationsAggId = $scope.vis.aggs.bySchemaName['locations'][0].id;
+		var locationsAggId = $scope.vis.aggs.bySchemaName['countries'][0].id;
 		// Retrieve the metrics aggregation configured
-		var metricsAgg = $scope.vis.aggs.bySchemaName['locationsize'][0];
+		var metricsAgg = $scope.vis.aggs.bySchemaName['countryvalue'][0];
 		var buckets = resp.aggregations[locationsAggId].buckets;
-
-
-
-		var min = Number.MAX_VALUE;
-		var max = - Number.MAX_VALUE;
-
 
 
 		// Transform all buckets into tag objects
 		$scope.locations = buckets.map(function(bucket) {
 			// Use the getValue function of the aggregation to get the value of a bucket
 			var value = metricsAgg.getValue(bucket);
-			// Finding the minimum and maximum value of all buckets
-			min = Math.min(min, value);
-			max = Math.max(max, value);
-			
+						
 			return {
 				label: bucket.key,
-				//geo:$scope.decodeGeoHash(bucket.key),
 				value: value
 			};
 		});
 
-		var countrycolormin=$scope.hexToRGB($scope.vis.params.countryColorMin)		
-		var countrycolormax=$scope.hexToRGB($scope.vis.params.countryColorMax)		
-		var countrycolor=countrycolormin;
-
-
-		// Calculate the font size for each tag
-		$scope.locations = $scope.locations.map(function(location) {
-//			console.log("location---");
-			console.log(location);
+		
+/*		$scope.locations = $scope.locations.map(function(location) {
 			
-			if(max!=min)
-			{
-				var tmpval=(location.value - min) / (max - min);
-				
-				circlecolor=[];
-				for(var x=0;x<circlecolormin.length;x++)
-				{
-					circlecolor.push(Math.floor(tmpval*(circlecolormax[x]-circlecolormin[x])+circlecolormin[x]));				
-				}
-				location.color=circlecolor;
-				console.log(circlecolor);
-			}
-			
-
 			return location;
-		});
+		});*/
 				
 		// Draw Map
 			
-		var dynmarkers=[];
-	
+		var data={};
+		
 		angular.forEach($scope.locations, function(value, key){
-			 /*dynmarkers.push({latLng: [value.geo.latitude[2], value.geo.longitude[2]]
-				 , name: 'lat:'+value.geo.latitude[2]+' lon:'+value.geo.longitude[2]+' ('+value.value+')'
-				 ,style: {fill: 'rgba('+value.color[0]+','+value.color[1]+','+value.color[2]+','+($scope.vis.params.circleOpacity/100)+')', r:value.radius}})
-				 */
+			if(value.label!=undefined)
+				data[value.label.toUpperCase()]=value.value;
+			 
 		});
 
+		
+		//console.log(data);
 		
 		try { $('#map').vectorMap('get', 'mapObject').remove(); }
 		catch(err) {}
 		
-		var data = {
-		  "AF": 16.63,
-		  "AL": 11.58,
-		  "DZ": 158.97,
-		  "AO": 85.81,
-		  "AG": 1.1,
-		  "AR": 351.02,
-		  "AM": 8.83,
-		  "AU": 1219.72,
-		  "AT": 366.26,
-			"AZ": 52.17};
+		
 		
         $('#map').vectorMap(
   			  {
@@ -129,16 +83,15 @@ module.controller('JVectorMapCountryController', function($scope, Private) {
 			      series: {
 			        regions: [{
 			          values: data,
-			          scale: ['#C8EEFF', '#0071A4'],
+			          scale: [$scope.vis.params.countryColorMin, $scope.vis.params.countryColorMax],
 			          normalizeFunction: 'polynomial'
 			        }]
 			      },
 			      onRegionTipShow: function(e, el, code){
-			        el.html(el.html()+' (GDP)');
+			        el.html(el.html()+' ('+data[code]+')');
 			      }
 				  ,
-  				  backgroundColor: $scope.vis.params.mapBackgroundColor/*,
-  				  markers: dynmarkers*/
+  				  backgroundColor: $scope.vis.params.mapBackgroundColor
   			}
   	  	);     		
 		// End of draw map
