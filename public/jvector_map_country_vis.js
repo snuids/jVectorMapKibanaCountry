@@ -34,7 +34,7 @@ function JVectorMapCountryProvider(Private) {
 				{
 					group: 'metrics',
 					name: 'countryvalue',
-					title: 'CouuntryValue',
+					title: 'Country Value',
 					min: 1,
 					max: 1,
 					aggFilter: ['count', 'avg', 'sum', 'min', 'max', 'cardinality', 'std_dev']
