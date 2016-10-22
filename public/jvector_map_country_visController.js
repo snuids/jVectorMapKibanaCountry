@@ -6,9 +6,9 @@ module.controller('JVectorMapCountryController', function($scope, Private) {
 
 	var filterManager = Private(require('ui/filter_manager'));
 
-	
-	
-	
+
+
+
 	$scope.filter = function(tag) {
 		// Add a new filter via the filter manager
 		filterManager.add(
@@ -45,41 +45,64 @@ module.controller('JVectorMapCountryController', function($scope, Private) {
 		// Transform all buckets into tag objects
 		$scope.locations = buckets.map(function(bucket) {
 			// Use the getValue function of the aggregation to get the value of a bucket
-			var value = metricsAgg.getValue(bucket);
-						
-			return {
-				label: bucket.key,
-				value: value
-			};
+
+				var value = metricsAgg.getValue(bucket);
+
+				return {
+					label: bucket.key,
+					value: value
+				};
+
 		});
 
-		
+		if($scope.vis.params.normalizeInput)
+		{
+			//console.log("TOTO:"+JSON.stringify($scope.locations));
+			var locshm={};
+			var locs=$scope.locations;
+			for (var i=0;i<locs.length;i++)
+			{
+				locs[i].label=locs[i].label.toUpperCase();
+				if(locshm[locs[i].label]!=null)
+				  locshm[locs[i].label].value+=locs[i].value;
+			  else
+			  		locshm[locs[i].label]=locs[i];
+			}
+
+			var locs2=[];
+
+			for (var type in locshm)
+			    locs2.push(locshm[type]);
+
+			$scope.locations=locs2;
+		}
+
 /*		$scope.locations = $scope.locations.map(function(location) {
-			
+
 			return location;
 		});*/
-				
+
 		// Draw Map
-			
+
 		var data={};
-		
+
 		angular.forEach($scope.locations, function(value, key){
 			if(value.label!=undefined)
 				data[value.label.toUpperCase()]=value.value;
-			 
+
 		});
 
-		
+
 		//console.log(data);
-		
+
 		try { $('#map').vectorMap('get', 'mapObject').remove(); }
 		catch(err) {}
-		
-		
-		
+
+
+
         $('#map').vectorMap(
   			  {
-  				  map: $scope.vis.params.selectedMap+'_mill',			  
+  				  map: $scope.vis.params.selectedMap+'_mill',
 			      series: {
 			        regions: [{
 			          values: data,
@@ -93,8 +116,8 @@ module.controller('JVectorMapCountryController', function($scope, Private) {
 				  ,
   				  backgroundColor: $scope.vis.params.mapBackgroundColor
   			}
-  	  	);     		
+  	  	);
 		// End of draw map
-		
+
 	});
 });
