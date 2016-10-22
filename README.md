@@ -11,6 +11,8 @@ Unless required by applicable law or agreed to in writing, software distributed 
 
 Simply unzip the content in the plugin folder of Kibana. The aggregation key must match the country code as defined in jVectorMap. (US=United States, GB=Great Britain e.t.c.)
 
+The "Normalize Input To UpperCase" simply aggregates lower and upper case values together. For example a record set with "us":2 and "US":1 becomes "US":3.
+
 Maps provided by: http://jvectormap.com/ are not free of charge for commercial products.
 
 Screenshots here: https://github.com/snuids/jVectorMapKibanaCountry/wiki
