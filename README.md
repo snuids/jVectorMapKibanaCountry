@@ -2,6 +2,8 @@
 
 An Offline country code map visualizer for Kibana 4.4.
 
+Version for Kibana 5.0 here https://github.com/snuids/Elastic-5.0-Country-Map-Visualizer
+
 Copyright 2016 Arnaud Marchand
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
